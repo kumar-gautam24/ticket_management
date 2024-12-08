@@ -1,0 +1,26 @@
+name: ticket_management
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  bloc: ^8.1.4
+  cloud_firestore: ^5.5.1
+
+  firebase_auth: ^5.3.4
+  firebase_core: ^3.8.1
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.6
+  meta: ^1.15.0
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
