@@ -25,9 +25,7 @@ class _AddTicketScreenState extends State<AddTicketScreen> {
       createdBy: widget.userId,
     );
 
-    BlocProvider.of<TicketBlocBloc>(context)
-      ..add(AddTicketEvent(ticket))
-      ..add(FetchTicketsEvent(userId: widget.userId));
+    BlocProvider.of<TicketBlocBloc>(context).add(AddTicketEvent(ticket));
   }
 
   @override
@@ -49,6 +47,8 @@ class _AddTicketScreenState extends State<AddTicketScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.message)),
               );
+              BlocProvider.of<TicketBlocBloc>(context)
+                  .add(FetchTicketsEvent(userId: widget.userId));
               Navigator.pop(context);
             } else if (state is TicketErrorState) {
               setState(() {

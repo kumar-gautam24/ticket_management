@@ -72,6 +72,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           UpdateTicketEvent(
                               ticket.id, 'Resolved', ticket.assignedTo),
                         );
+                        BlocProvider.of<TicketBlocBloc>(context)
+                            .add(FetchTicketsEvent());
                       },
                       child: const Text('Resolve'),
                     ),
