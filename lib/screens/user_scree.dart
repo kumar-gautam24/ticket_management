@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
+import '../models/usermodel.dart';
 import '../services/auth_services.dart';
 import 'add_ticket.dart';
 import 'login_screen.dart';
 
 class UserScreen extends StatefulWidget {
+  final UserModel user;
   final String userId;
 
-  const UserScreen({super.key, required this.userId});
+  const UserScreen({super.key, required this.userId, required this.user});
 
   @override
   State<UserScreen> createState() => _UserScreenState();
 }
 
 class _UserScreenState extends State<UserScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -24,17 +25,16 @@ class _UserScreenState extends State<UserScreen> {
         .add(FetchTicketsEvent(userId: widget.userId));
   }
 
- 
   void _deleteTicket(String ticketId) {
     BlocProvider.of<TicketBlocBloc>(context)
         .add(DeleteTicketEvent(ticketId: ticketId));
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Dashboard'),
+        title:  Text('User ${widget.user.name}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -72,10 +72,9 @@ class _UserScreenState extends State<UserScreen> {
                   final ticket = state.tickets[index];
                   print("here in ticket builder");
                   return Dismissible(
-                     key: Key(ticket.id),
-                    direction: DismissDirection.endToStart, 
+                    key: Key(ticket.id),
+                    direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
-                      
                       _deleteTicket(ticket.id);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('${ticket.title} deleted')),

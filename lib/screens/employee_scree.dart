@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ticket_management/models/usermodel.dart';
 
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
 import '../services/auth_services.dart';
 import 'login_screen.dart';
 
 class EmployeeScreen extends StatefulWidget {
+  final UserModel user;
   final String employeeId;
 
-  const EmployeeScreen({super.key, required this.employeeId});
+  const EmployeeScreen({super.key, required this.employeeId, required this.user});
 
   @override
   State<EmployeeScreen> createState() => _EmployeeScreenState();
@@ -25,7 +27,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Employee Dashboard'),
+        title:  Text('Employee ${widget.user.name}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

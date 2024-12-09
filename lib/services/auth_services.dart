@@ -6,6 +6,7 @@ class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+// login user here 
   Future<UserModel?> login(String email, String password) async {
     final userCredential = await _auth.signInWithEmailAndPassword(
       email: email,
@@ -19,13 +20,9 @@ class FirebaseAuthService {
       throw Exception('User not found in Firestore');
     }
   }
-
-  Future<void> deleteUser(String userId) async {
-    await _firestore.collection('users').doc(userId).delete();
-  }
-
+// register account here 
   Future<UserModel?> register(
-      String email, String password, String role) async {
+      String email, String password, String role,String name) async {
     final userCredential = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -44,20 +41,7 @@ class FirebaseAuthService {
     return UserModel.fromFirestore(userDoc.data()!, userId);
   }
 
-  Future<String> getUserRole(String uid) async {
-    try {
-      DocumentSnapshot snapshot =
-          await _firestore.collection('users').doc(uid).get();
-      if (snapshot.exists) {
-        return snapshot['role'] ??
-            'user'; // Default to 'user' if role not found
-      } else {
-        throw 'User not found';
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
+ 
 
   Future<void> logout() async => await _auth.signOut();
 }

@@ -1,37 +1,39 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ticket_management/models/usermodel.dart';
+import 'package:ticket_management/repos/user_repo.dart';
 import 'package:ticket_management/screens/add_userscreen.dart';
-import 'package:ticket_management/services/firestore_repo.dart';
+import 'package:ticket_management/repos/ticket_repo.dart';
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
 import '../services/auth_services.dart';
 import 'login_screen.dart';
 
 class AdminScreen extends StatefulWidget {
-  const AdminScreen({super.key});
+  final UserModel user;
+  const AdminScreen({super.key, required this.user});
 
   @override
   State<AdminScreen> createState() => _AdminScreenState();
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<TicketBlocBloc>(context)
-        .add(FetchTicketsEvent());
+    BlocProvider.of<TicketBlocBloc>(context).add(FetchTicketsEvent());
   }
 
- 
   void _deleteTicket(String ticketId) {
     BlocProvider.of<TicketBlocBloc>(context)
         .add(DeleteTicketEvent(ticketId: ticketId));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Dashboard'),
+        title: Text('Admin ${widget.user.name}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -39,11 +41,10 @@ class _AdminScreenState extends State<AdminScreen> {
               try {
                 await FirebaseAuthService().logout();
                 Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
               } catch (e) {
-                
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Failed to log out: ${e.toString()}')),
                 );
@@ -63,20 +64,19 @@ class _AdminScreenState extends State<AdminScreen> {
                 final ticket = state.tickets[index];
                 return Dismissible(
                   key: Key(ticket.id),
-                    direction: DismissDirection.endToStart, 
-                    onDismissed: (direction) {
-                      
-                      _deleteTicket(ticket.id);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${ticket.title} deleted')),
-                      );
-                    },
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 20.0),
-                      child: const Icon(Icons.delete, color: Colors.white),
-                    ),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    _deleteTicket(ticket.id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${ticket.title} deleted')),
+                    );
+                  },
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 20.0),
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
                   child: ListTile(
                     title: Text(ticket.title),
                     subtitle: Text('Status: ${ticket.status}'),
@@ -112,24 +112,22 @@ class _AdminScreenState extends State<AdminScreen> {
 
   void _showAssignDialog(BuildContext context, String ticketId) async {
     // Fetch list of employees with the role 'employee'
-    final employeeIds = await TicketRepository().getEmployeeIdsByRole('employee');
-
+    final List<UserModel> employees = await UserRepo().getUserByRole("employee");
     // Displaying employee IDs in the dialog
     showDialog(
       context: context,
       builder: (_) {
         return AlertDialog(
           title: const Text('Assign Ticket'),
-          content: employeeIds.isNotEmpty
+          content: employees.isNotEmpty
               ? Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: employeeIds.map((employeeId) {
+                  children: employees.map((employee) {
                     return ListTile(
-                      title: Text(employeeId), // Using employee ID as "name"
+                      title: Text(employee.name),  
                       onTap: () {
-                        // Assign the ticket to the selected employee ID
                         BlocProvider.of<TicketBlocBloc>(context).add(
-                          UpdateTicketEvent(ticketId, 'Assigned', employeeId),
+                          UpdateTicketEvent(ticketId, 'Assigned', employee.id),
                         );
                         Navigator.pop(context); // Close the dialog
                       },

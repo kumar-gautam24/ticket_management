@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ticket_management/firebase_options.dart';
 import 'package:ticket_management/screens/login_screen.dart';
-import 'package:ticket_management/services/firestore_repo.dart';
+import 'package:ticket_management/repos/ticket_repo.dart';
 import 'blocs/ticket_bloc/ticket_bloc_bloc.dart';
 
 

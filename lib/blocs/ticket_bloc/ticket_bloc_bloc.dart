@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../models/ticketModel.dart';
-import '../../services/firestore_repo.dart';
+import '../../repos/ticket_repo.dart';
 
 part 'ticket_bloc_event.dart';
 part 'ticket_bloc_state.dart';

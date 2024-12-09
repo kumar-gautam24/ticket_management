@@ -1,14 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/ticketModel.dart';
 
-class FirestoreService {
+class TicketService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> addTicket(TicketModel ticket) async {
     await _firestore.collection('tickets').add(ticket.toFirestore());
   }
 
-  Stream<List<TicketModel>> getTickets(String? userId,) {
+  Stream<List<TicketModel>> getTickets(
+    String? userId,
+  ) {
     // print("user id in fetch service $userId");
     if (userId != null) {
       return _firestore

@@ -13,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
   bool _isLoading = false;
   String _errorMessage = '';
@@ -30,6 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _emailController.text.trim(),
         _passwordController.text.trim(),
         role,
+        _nameController.text.trim(),
       );
 
       if (user != null) {
@@ -55,6 +57,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                hintText: 'Enter Your name',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.name,
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(
