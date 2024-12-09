@@ -25,7 +25,6 @@ class _UserScreenState extends State<UserScreen> {
     super.initState();
     BlocProvider.of<TicketBlocBloc>(context)
         .add(FetchTicketsEvent(userId: widget.userId));
-        
   }
 
   void _deleteTicket(String ticketId) {
@@ -73,7 +72,7 @@ class _UserScreenState extends State<UserScreen> {
               }
               var tickets = state.tickets;
               return ListView.builder(
-                itemCount: state.tickets.length,
+                itemCount: tickets.length,
                 itemBuilder: (context, index) {
                   final ticket = tickets[index];
                   if (kDebugMode) {
@@ -93,7 +92,9 @@ class _UserScreenState extends State<UserScreen> {
                           action: SnackBarAction(
                             label: "Undo",
                             onPressed: () {
-                              tickets.insert(index, removedTicket);
+                              setState(() {
+                                tickets.insert(index, removedTicket);
+                              });
                             },
                           ),
                           duration: Duration(seconds: 5),
@@ -140,4 +141,3 @@ class _UserScreenState extends State<UserScreen> {
     );
   }
 }
-

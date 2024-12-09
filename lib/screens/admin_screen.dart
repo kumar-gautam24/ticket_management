@@ -51,70 +51,79 @@ class _AdminScreenState extends State<AdminScreen> {
           ),
         ],
       ),
-      body: BlocBuilder<TicketBlocBloc, TicketBlocState>(
-        builder: (context, state) {
-          if (state is TicketsLoadingState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is TicketsLoadedState) {
-            var tickets = state.tickets;
-            return ListView.builder(
-              itemCount: state.tickets.length,
-              itemBuilder: (context, index) {
-                final ticket = tickets[index];
-                return Dismissible(
-                  key: Key(ticket.id),
-                  direction: DismissDirection.endToStart,
-                  onDismissed: (direction) {
-                    final removedTicket = tickets[index];
-                    setState(() {
-                      tickets.removeAt(index);
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${ticket.title} deleted'),
-                        action: SnackBarAction(
-                          label: "Undo",
-                          onPressed: () {
-                            tickets.insert(index, removedTicket);
-                          },
-                        ),
-                        duration: Duration(seconds: 5),
-                      ),
-                    );
-                    Future.delayed(const Duration(seconds: 5), () {
-                      if (!tickets.contains(removedTicket)) {
-                        _deleteTicket(ticket.id); // Delete only if not restored
-                      }
-                    });
-                  },
-                  background: Container(
-                    color: Colors.red,
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: const Icon(Icons.delete, color: Colors.white),
-                  ),
-                  child: ListTile(
-                    title: Text(ticket.title),
-                    subtitle: Text('Status: ${ticket.status}'),
-                    trailing: PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'Assign') {
-                          _showAssignDialog(context, ticket.id);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                            value: 'Assign', child: Text('Assign')),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          } else {
-            return const Center(child: Text('No tickets available.'));
-          }
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 500));
+          BlocProvider.of<TicketBlocBloc>(context).add(FetchTicketsEvent());
         },
+        child: BlocBuilder<TicketBlocBloc, TicketBlocState>(
+          builder: (context, state) {
+            if (state is TicketsLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is TicketsLoadedState) {
+              var tickets = state.tickets;
+              return ListView.builder(
+                itemCount: tickets.length,
+                itemBuilder: (context, index) {
+                  final ticket = tickets[index];
+                  return Dismissible(
+                    key: Key(ticket.id),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      final removedTicket = tickets[index];
+                      setState(() {
+                        tickets.removeAt(index);
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${ticket.title} deleted'),
+                          action: SnackBarAction(
+                            label: "Undo",
+                            onPressed: () {
+                              setState(() {
+                                tickets.insert(index, removedTicket);
+                              });
+                            },
+                          ),
+                          duration: Duration(seconds: 5),
+                        ),
+                      );
+                      Future.delayed(const Duration(seconds: 5), () {
+                        if (!tickets.contains(removedTicket)) {
+                          _deleteTicket(
+                              ticket.id); // Delete only if not restored
+                        }
+                      });
+                    },
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    child: ListTile(
+                      title: Text(ticket.title),
+                      subtitle: Text('Status: ${ticket.status}'),
+                      trailing: PopupMenuButton<String>(
+                        onSelected: (value) {
+                          if (value == 'Assign') {
+                            _showAssignDialog(context, ticket.id);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                              value: 'Assign', child: Text('Assign')),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else {
+              return const Center(child: Text('No tickets available.'));
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

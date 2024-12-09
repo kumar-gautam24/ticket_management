@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../models/ticketModel.dart';
@@ -31,18 +32,24 @@ class TicketBlocBloc extends Bloc<TicketBlocEvent, TicketBlocState> {
         await emit.forEach<List<TicketModel>>(
           ticketStream,
           onData: (tickets) {
-            print("Tickets received: $tickets");
+            if (kDebugMode) {
+              print("Tickets received: $tickets");
+            }
             return TicketsLoadedState(
                 tickets); // Emit the loaded state with tickets
           },
           onError: (error, stackTrace) {
-            print("Error occurred while fetching tickets: $error");
+            if (kDebugMode) {
+              print("Error occurred while fetching tickets: $error");
+            }
             return TicketErrorState(
                 error.toString()); // Handle the error properly
           },
         );
       } catch (e) {
-        print("Error in fetching tickets: $e");
+        if (kDebugMode) {
+          print("Error in fetching tickets: $e");
+        }
         emit(TicketErrorState(e.toString()));
       }
     });
