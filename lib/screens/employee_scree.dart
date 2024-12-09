@@ -10,7 +10,8 @@ class EmployeeScreen extends StatefulWidget {
   final UserModel user;
   final String employeeId;
 
-  const EmployeeScreen({super.key, required this.employeeId, required this.user});
+  const EmployeeScreen(
+      {super.key, required this.employeeId, required this.user});
 
   @override
   State<EmployeeScreen> createState() => _EmployeeScreenState();
@@ -27,7 +28,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('Employee ${widget.user.name}'),
+        title: Text('Employee ${widget.user.name}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -68,17 +69,23 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   return ListTile(
                     title: Text(ticket.title),
                     subtitle: Text('Status: ${ticket.status}'),
-                    trailing: ElevatedButton(
-                      onPressed: () {
-                        BlocProvider.of<TicketBlocBloc>(context).add(
-                          UpdateTicketEvent(
-                              ticket.id, 'Resolved', ticket.assignedTo),
-                        );
-                        BlocProvider.of<TicketBlocBloc>(context)
-                            .add(FetchTicketsEvent());
-                      },
-                      child: const Text('Resolve'),
-                    ),
+                    trailing: ticket.status == "Resolved"
+                        ? ElevatedButton(
+                            onPressed: () {
+                              BlocProvider.of<TicketBlocBloc>(context).add(
+                                UpdateTicketEvent(
+                                    ticket.id, 'Resolved', ticket.assignedTo),
+                              );
+                              BlocProvider.of<TicketBlocBloc>(context)
+                                  .add(FetchTicketsEvent());
+                            },
+                            child: const Text(
+                              'Resolve',
+                            ))
+                        : const Text(
+                            "Resolved",
+                            style: TextStyle(color: Colors.green),
+                          ),
                   );
                 },
               ),

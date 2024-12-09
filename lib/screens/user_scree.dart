@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ticket_management/models/ticketModel.dart';
 
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
 import '../models/usermodel.dart';
@@ -23,6 +25,7 @@ class _UserScreenState extends State<UserScreen> {
     super.initState();
     BlocProvider.of<TicketBlocBloc>(context)
         .add(FetchTicketsEvent(userId: widget.userId));
+        
   }
 
   void _deleteTicket(String ticketId) {
@@ -34,7 +37,7 @@ class _UserScreenState extends State<UserScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('User ${widget.user.name}'),
+        title: Text('User ${widget.user.name}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -65,20 +68,43 @@ class _UserScreenState extends State<UserScreen> {
             if (state is TicketsLoadingState) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is TicketsLoadedState) {
-              print("loded state");
+              if (kDebugMode) {
+                print("loded state");
+              }
+              var tickets = state.tickets;
               return ListView.builder(
                 itemCount: state.tickets.length,
                 itemBuilder: (context, index) {
-                  final ticket = state.tickets[index];
-                  print("here in ticket builder");
+                  final ticket = tickets[index];
+                  if (kDebugMode) {
+                    print("here in ticket builder");
+                  }
                   return Dismissible(
                     key: Key(ticket.id),
                     direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      _deleteTicket(ticket.id);
+                    onDismissed: (direction) async {
+                      final removedTicket = tickets[index];
+                      setState(() {
+                        tickets.removeAt(index);
+                      });
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${ticket.title} deleted')),
+                        SnackBar(
+                          content: Text('${ticket.title} deleted'),
+                          action: SnackBarAction(
+                            label: "Undo",
+                            onPressed: () {
+                              tickets.insert(index, removedTicket);
+                            },
+                          ),
+                          duration: Duration(seconds: 5),
+                        ),
                       );
+                      Future.delayed(const Duration(seconds: 5), () {
+                        if (!tickets.contains(removedTicket)) {
+                          _deleteTicket(
+                              ticket.id); // Delete only if not restored
+                        }
+                      });
                     },
                     background: Container(
                       color: Colors.red,
@@ -114,3 +140,4 @@ class _UserScreenState extends State<UserScreen> {
     );
   }
 }
+

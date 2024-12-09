@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ticket_management/models/usermodel.dart';
 import 'package:ticket_management/repos/user_repo.dart';
 import 'package:ticket_management/screens/add_userscreen.dart';
-import 'package:ticket_management/repos/ticket_repo.dart';
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
 import '../services/auth_services.dart';
 import 'login_screen.dart';
@@ -58,18 +56,36 @@ class _AdminScreenState extends State<AdminScreen> {
           if (state is TicketsLoadingState) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is TicketsLoadedState) {
+            var tickets = state.tickets;
             return ListView.builder(
               itemCount: state.tickets.length,
               itemBuilder: (context, index) {
-                final ticket = state.tickets[index];
+                final ticket = tickets[index];
                 return Dismissible(
                   key: Key(ticket.id),
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
-                    _deleteTicket(ticket.id);
+                    final removedTicket = tickets[index];
+                    setState(() {
+                      tickets.removeAt(index);
+                    });
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${ticket.title} deleted')),
+                      SnackBar(
+                        content: Text('${ticket.title} deleted'),
+                        action: SnackBarAction(
+                          label: "Undo",
+                          onPressed: () {
+                            tickets.insert(index, removedTicket);
+                          },
+                        ),
+                        duration: Duration(seconds: 5),
+                      ),
                     );
+                    Future.delayed(const Duration(seconds: 5), () {
+                      if (!tickets.contains(removedTicket)) {
+                        _deleteTicket(ticket.id); // Delete only if not restored
+                      }
+                    });
                   },
                   background: Container(
                     color: Colors.red,
@@ -112,7 +128,8 @@ class _AdminScreenState extends State<AdminScreen> {
 
   void _showAssignDialog(BuildContext context, String ticketId) async {
     // Fetch list of employees with the role 'employee'
-    final List<UserModel> employees = await UserRepo().getUserByRole("employee");
+    final List<UserModel> employees =
+        await UserRepo().getUserByRole("employee");
     // Displaying employee IDs in the dialog
     showDialog(
       context: context,
@@ -124,7 +141,7 @@ class _AdminScreenState extends State<AdminScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: employees.map((employee) {
                     return ListTile(
-                      title: Text(employee.name),  
+                      title: Text(employee.name),
                       onTap: () {
                         BlocProvider.of<TicketBlocBloc>(context).add(
                           UpdateTicketEvent(ticketId, 'Assigned', employee.id),
@@ -138,7 +155,7 @@ class _AdminScreenState extends State<AdminScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close dialog on cancel
+                Navigator.pop(context);
               },
               child: const Text('Cancel'),
             ),
