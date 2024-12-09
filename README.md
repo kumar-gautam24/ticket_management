@@ -1,5 +1,3 @@
-Here is a sample description that you can add to your GitHub README for the "Ticket Management" app:
-
 ---
 
 # Ticket Management (Flutter, Firebase)
