@@ -41,14 +41,14 @@ class _LoginScreenState extends State<LoginScreen> {
             context,
             MaterialPageRoute(
                 builder: (_) => AdminScreen(
-                      user: user,
+                      user: user!,
                     )));
       } else if (role == 'employee') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => EmployeeScreen(
-              employeeId: user.id,
+              employeeId: user!.id,
               user: user,
             ),
           ),
@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
           context,
           MaterialPageRoute(
             builder: (_) => UserScreen(
-              userId: user.id,
+              userId: user!.id,
               user: user,
             ),
           ),
