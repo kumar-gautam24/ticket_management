@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   bloc: ^8.1.4
+  bloc_test: ^9.1.7
   cloud_firestore: ^5.5.1
 
   firebase_auth: ^5.3.4
@@ -16,6 +17,7 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^8.1.6
   meta: ^1.15.0
+  mockito: ^5.4.5
 
 dev_dependencies:
   flutter_lints: ^5.0.0
