@@ -20,7 +20,6 @@ class DefaultFirebaseOptions {
       return web;
     }
     switch (defaultTargetPlatform) {
-     
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
@@ -48,7 +47,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBKDUorIuzCBccvVC58POg9EtC8eCd7xRs',
+    apiKey: 'AIzaSyCm9jyxc2px2VPvWq_-emmXtbS7pVnTNp8',
     appId: '1:831645109181:web:517ef687a82a881412a0d4',
     messagingSenderId: '831645109181',
     projectId: 'techmind-test',

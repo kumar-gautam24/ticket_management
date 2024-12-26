@@ -6,10 +6,9 @@ import 'package:ticket_management/screens/login_screen.dart';
 import 'package:ticket_management/repos/ticket_repo.dart';
 import 'blocs/ticket_bloc/ticket_bloc_bloc.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
