@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ticket_management/models/ticketModel.dart';
 
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
 import '../models/usermodel.dart';

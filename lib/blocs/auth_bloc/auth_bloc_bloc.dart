@@ -24,17 +24,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AuthStarted event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final userId = userServices.getUserId();
-      if (userId != null) {
-        final user = await userServices.getUserById(userId);
-        final role = await userServices.getUserRole(userId);
-        emit(Authenticated(user: user!, role: role));
-      } else {
-        emit(Unauthenticated());
-      }
+      // Listen to authentication state changes
+      authService.authStateChanges().listen((user) async {
+        if (user != null) {
+          final userId = user.uid;
+          final role = await userServices.getUserRole(userId);
+          final userModel = await userServices.getUserById(userId);
+          emit(Authenticated(user: userModel!, role: role));
+        } else {
+          emit(Unauthenticated());
+        }
+      });
     } catch (e) {
-      emit(AuthError(
-          message: 'Error checking authentication state: ${e.toString()}'));
+      emit(AuthError(message: e.toString()));
     }
   }
 

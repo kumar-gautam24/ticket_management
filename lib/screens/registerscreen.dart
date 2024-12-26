@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../services/auth_services.dart';
-import 'login_screen.dart';
+import '../blocs/auth_bloc/auth_bloc_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,120 +14,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final FirebaseAuthService _authService = FirebaseAuthService();
-  bool _isLoading = false;
-  String _errorMessage = '';
-  String role = 'user';
+  final TextEditingController _roleController = TextEditingController();
 
-  // register
   Future<void> _register() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-    });
-
-    try {
-      final user = await _authService.register(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-        role,
-        _nameController.text.trim(),
-      );
-
-      if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+    context.read<AuthBloc>().add(
+          RegisterRequested(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+            role: _roleController.text.trim(),
+            name: _nameController.text.trim(),
+          ),
         );
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Registration failed: ${e.toString()}';
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'Enter Your name',
-                border: OutlineInputBorder(),
+      appBar: AppBar(
+        title: const Text('Register'),
+      ),
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
               ),
-              keyboardType: TextInputType.name,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
-                border: OutlineInputBorder(),
+              TextField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                hintText: 'Enter your password',
-                border: OutlineInputBorder(),
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: role,
-              items: ['admin', 'employee', 'user'].map((role) {
-                return DropdownMenuItem<String>(
-                  value: role,
-                  child: Text(role),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  role = value ?? 'user';
-                });
-              },
-              decoration: const InputDecoration(
-                labelText: 'Select Role',
-                border: OutlineInputBorder(),
+              TextField(
+                controller: _roleController,
+                decoration: const InputDecoration(labelText: 'Role'),
               ),
-            ),
-            if (_isLoading)
-              const Center(child: CircularProgressIndicator())
-            else
               ElevatedButton(
                 onPressed: _register,
                 child: const Text('Register'),
               ),
-            if (_errorMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text(
-                  _errorMessage,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Go back to login screen
-              },
-              child: const Text('Already have an account? Login here'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

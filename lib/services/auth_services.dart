@@ -6,6 +6,11 @@ class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  FirebaseAuthService() {
+    //  persistence to local for web
+    _auth.setPersistence(Persistence.LOCAL);
+  }
+
   // login user
   Future<UserModel?> login(String email, String password) async {
     try {
@@ -26,7 +31,8 @@ class FirebaseAuthService {
   }
 
   // register account
-  Future<UserModel?> register(String email, String password, String role, String name) async {
+  Future<UserModel?> register(
+      String email, String password, String role, String name) async {
     try {
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -50,6 +56,11 @@ class FirebaseAuthService {
     }
   }
 
+  // auth state
+  Stream<User?> authStateChanges() {
+    return _auth.authStateChanges();
+  }
+
   // logout user
   Future<void> logout() async {
     await _auth.signOut();
@@ -65,7 +76,8 @@ class FirebaseAuthService {
   }
 
   // update user profile
-  Future<void> updateUserProfile(String userId, Map<String, dynamic> data) async {
+  Future<void> updateUserProfile(
+      String userId, Map<String, dynamic> data) async {
     try {
       await _firestore.collection('users').doc(userId).update(data);
     } catch (e) {
