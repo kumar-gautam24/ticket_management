@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ticket_management/models/usermodel.dart';
+import 'package:ticket_management/models/user_model.dart';
 
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
 import '../services/auth_services.dart';

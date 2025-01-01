@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:test/test.dart';
-import 'package:ticket_management/models/ticketModel.dart';
+import 'package:ticket_management/models/ticket_model.dart';
 
 void main() {
   group("ticket class unit test, from json ", () {

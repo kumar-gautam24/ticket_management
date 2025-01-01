@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/ticketModel.dart';
+import '../models/ticket_model.dart';
 import '../services/ticket_service.dart';
 
 class TicketRepository {

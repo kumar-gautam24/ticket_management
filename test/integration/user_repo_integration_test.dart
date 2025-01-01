@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ticket_management/repos/user_repo.dart';
-import 'package:ticket_management/models/usermodel.dart';
+import 'package:ticket_management/models/user_model.dart';
 
 void main() {
   final UserRepo userRepo = UserRepo();

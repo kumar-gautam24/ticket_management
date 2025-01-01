@@ -36,4 +36,9 @@ class RegisterRequested extends AuthEvent {
   List<Object?> get props => [email, password, role, name];
 }
 
-class LoggedOut extends AuthEvent {}
+class LoggedOut extends AuthEvent {
+  
+  @override
+  List<Object?> get props => [];
+
+}

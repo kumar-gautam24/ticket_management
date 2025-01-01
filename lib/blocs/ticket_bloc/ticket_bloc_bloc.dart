@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
-import '../../models/ticketModel.dart';
+import '../../models/ticket_model.dart';
 import '../../repos/ticket_repo.dart';
 
 part 'ticket_bloc_event.dart';

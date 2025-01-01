@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ticket_management/models/usermodel.dart';
+import 'package:ticket_management/models/user_model.dart';
 import 'package:ticket_management/repos/user_repo.dart';
 import 'package:ticket_management/screens/add_userscreen.dart';
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';

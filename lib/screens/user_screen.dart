@@ -2,8 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/auth_bloc/auth_bloc_bloc.dart';
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
-import '../models/usermodel.dart';
+import '../models/user_model.dart';
 import '../services/auth_services.dart';
 import 'add_ticket.dart';
 import 'login_screen.dart';
@@ -41,11 +42,12 @@ class _UserScreenState extends State<UserScreen> {
             icon: const Icon(Icons.logout),
             onPressed: () async {
               try {
-                await FirebaseAuthService().logout();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                );
+                BlocProvider.of<AuthBloc>(context).add(LoggedOut());
+                // await FirebaseAuthService().logout();
+                // Navigator.pushReplacement(
+                //   context,
+                //   MaterialPageRoute(builder: (_) => const LoginScreen()),
+                // );
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Failed to log out: ${e.toString()}')),
@@ -67,7 +69,7 @@ class _UserScreenState extends State<UserScreen> {
               return const Center(child: CircularProgressIndicator());
             } else if (state is TicketsLoadedState) {
               if (kDebugMode) {
-                print("loded state");
+                print("loded state in user ui");
               }
               var tickets = state.tickets;
               return ListView.builder(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/ticketModel.dart';
+import '../models/ticket_model.dart';
 
 class TicketCard extends StatelessWidget {
   final TicketModel ticket;

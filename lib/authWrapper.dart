@@ -5,7 +5,7 @@ import 'blocs/auth_bloc/auth_bloc_bloc.dart';
 import 'screens/admin_screen.dart';
 import 'screens/employee_scree.dart';
 import 'screens/login_screen.dart';
-import 'screens/user_scree.dart';
+import 'screens/user_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -15,6 +15,7 @@ class AuthWrapper extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthLoading) {
+          print('AuthLoading');
           return const Center(child: CircularProgressIndicator());
         } else if (state is Authenticated) {
           // Navigate based on role
