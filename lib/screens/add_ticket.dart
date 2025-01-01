@@ -55,7 +55,7 @@ class _AddTicketScreenState extends State<AddTicketScreen> {
                 _isLoading = false;
               });
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
+                SnackBar(content: Text(state.errorMessage)),
               );
             }
           },

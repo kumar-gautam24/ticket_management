@@ -19,12 +19,12 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<TicketBlocBloc>(context).add(FetchTicketsEvent());
+    BlocProvider.of<TicketBlocBloc>(context).add(FetchTicketsEvent(userId: widget.user.id));
   }
 
   void _deleteTicket(String ticketId) {
     BlocProvider.of<TicketBlocBloc>(context)
-        .add(DeleteTicketEvent(ticketId: ticketId));
+        .add(DeleteTicketEvent(ticketId: ticketId, userId: widget.user.id));
   }
 
   @override
@@ -54,7 +54,7 @@ class _AdminScreenState extends State<AdminScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(const Duration(milliseconds: 500));
-          BlocProvider.of<TicketBlocBloc>(context).add(FetchTicketsEvent());
+          BlocProvider.of<TicketBlocBloc>(context).add(FetchTicketsEvent(userId: widget.user.id));
         },
         child: BlocBuilder<TicketBlocBloc, TicketBlocState>(
           builder: (context, state) {
@@ -153,7 +153,7 @@ class _AdminScreenState extends State<AdminScreen> {
                       title: Text(employee.name),
                       onTap: () {
                         BlocProvider.of<TicketBlocBloc>(context).add(
-                          UpdateTicketEvent(ticketId, 'Assigned', employee.id),
+                          UpdateTicketEvent( ticketId:ticketId, newStatus: 'Assigned', employeeId: employee.id),
                         );
                         Navigator.pop(context); // Close the dialog
                       },

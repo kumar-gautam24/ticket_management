@@ -11,7 +11,8 @@ class TicketBlocBloc extends Bloc<TicketBlocEvent, TicketBlocState> {
   final TicketRepository ticketRepository;
   TicketBlocBloc(this.ticketRepository) : super(TicketBlocInitial()) {
     on<TicketBlocEvent>((event, emit) {});
-    // create ticket
+
+    // Create ticket
     on<AddTicketEvent>((event, emit) async {
       try {
         await ticketRepository.addTicket(event.ticket);
@@ -21,7 +22,7 @@ class TicketBlocBloc extends Bloc<TicketBlocEvent, TicketBlocState> {
       }
     });
 
-    // fetch ticket
+    // Fetch tickets
     on<FetchTicketsEvent>((event, emit) async {
       emit(TicketsLoadingState());
       try {
@@ -53,10 +54,10 @@ class TicketBlocBloc extends Bloc<TicketBlocEvent, TicketBlocState> {
       }
     });
 
-    // update ticket
-    on<UpdateTicketEvent>((event, emit) {
+    // Update ticket
+    on<UpdateTicketEvent>((event, emit) async {
       try {
-        ticketRepository.updateTickets(
+        await ticketRepository.updateTickets(
             event.ticketId, event.newStatus, event.employeeId);
         emit(TicketsLoadingState());
         emit(TicketBlocAction(message: "Updated Successfully"));
@@ -64,15 +65,30 @@ class TicketBlocBloc extends Bloc<TicketBlocEvent, TicketBlocState> {
         emit(TicketErrorState(e.toString()));
       }
     });
-    // delete
+
+    // Delete ticket
     on<DeleteTicketEvent>((event, emit) async {
       try {
-        await ticketRepository.deleteTicket(event.ticketId);
-        emit(TicketBlocAction(message: "Ticket Deleted"));
-        add(FetchTicketsEvent());
+        // Get the ticket data before deleting, to allow restoration
+        var ticket = await ticketRepository.getTicketById(event.ticketId);
+
+        if (ticket != null) {
+          // Delete the ticket
+          await ticketRepository.deleteTicket(event.ticketId);
+          emit(TicketBlocAction(message: "Ticket Deleted"));
+
+          // Trigger a state to handle restoration (if needed)
+          emit(TicketDeletedState(
+              ticket)); // Store the deleted ticket for restoration
+
+          add(FetchTicketsEvent(userId: event.userId));
+        } else {
+          emit(TicketErrorState("Ticket not found"));
+        }
       } catch (e) {
         emit(TicketErrorState(e.toString()));
       }
     });
+
   }
 }

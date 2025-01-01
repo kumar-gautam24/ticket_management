@@ -28,8 +28,9 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void _deleteTicket(String ticketId) {
+    print("called delete ticket");
     BlocProvider.of<TicketBlocBloc>(context)
-        .add(DeleteTicketEvent(ticketId: ticketId));
+        .add(DeleteTicketEvent(ticketId: ticketId, userId: widget.userId));
   }
 
   @override
@@ -86,6 +87,7 @@ class _UserScreenState extends State<UserScreen> {
                       final removedTicket = tickets[index];
                       setState(() {
                         tickets.removeAt(index);
+                        print("ticket removed");
                       });
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -95,6 +97,7 @@ class _UserScreenState extends State<UserScreen> {
                             onPressed: () {
                               setState(() {
                                 tickets.insert(index, removedTicket);
+                                print("ticket restored");
                               });
                             },
                           ),
@@ -105,6 +108,9 @@ class _UserScreenState extends State<UserScreen> {
                         if (!tickets.contains(removedTicket)) {
                           _deleteTicket(
                               ticket.id); // Delete only if not restored
+                        }
+                        else{
+                          print("ticket not deleted");
                         }
                       });
                     },

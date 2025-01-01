@@ -1,24 +1,27 @@
 part of 'ticket_bloc_bloc.dart';
 
-@immutable
-sealed class TicketBlocState {}
+abstract class TicketBlocState {}
 
-final class TicketBlocInitial extends TicketBlocState {}
+class TicketBlocInitial extends TicketBlocState {}
 
-final class TicketBlocAction extends TicketBlocState {
-  final String message;
-  TicketBlocAction({required this.message});
-}
+class TicketsLoadingState extends TicketBlocState {}
 
-final class TicketsLoadingState extends TicketBlocState {}
-
-final class TicketsLoadedState extends TicketBlocState {
+class TicketsLoadedState extends TicketBlocState {
   final List<TicketModel> tickets;
   TicketsLoadedState(this.tickets);
 }
 
-final class TicketErrorState extends TicketBlocState {
+class TicketBlocAction extends TicketBlocState {
   final String message;
+  TicketBlocAction({required this.message});
+}
 
-  TicketErrorState(this.message);
+class TicketErrorState extends TicketBlocState {
+  final String errorMessage;
+  TicketErrorState(this.errorMessage);
+}
+
+class TicketDeletedState extends TicketBlocState {
+  final TicketModel ticket;
+  TicketDeletedState(this.ticket);
 }

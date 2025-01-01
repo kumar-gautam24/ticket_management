@@ -21,7 +21,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<TicketBlocBloc>(context).add(FetchTicketsEvent());
+    BlocProvider.of<TicketBlocBloc>(context).add(FetchTicketsEvent(userId: widget.user.id));
   }
 
   @override
@@ -60,7 +60,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
               onRefresh: () async {
                 await Future.delayed(const Duration(milliseconds: 500));
                 BlocProvider.of<TicketBlocBloc>(context)
-                    .add(FetchTicketsEvent());
+                    .add(FetchTicketsEvent(userId: widget.user.id));
               },
               child: ListView.builder(
                 itemCount: assignedTickets.length,
@@ -74,10 +74,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                             onPressed: () {
                               BlocProvider.of<TicketBlocBloc>(context).add(
                                 UpdateTicketEvent(
-                                    ticket.id, 'Resolved', ticket.assignedTo),
+                                   ticketId: ticket.id,
+                                  newStatus: 'Resolved',
+                                  employeeId: widget.employeeId,
+                                ),
                               );
                               BlocProvider.of<TicketBlocBloc>(context)
-                                  .add(FetchTicketsEvent());
+                                  .add(FetchTicketsEvent(userId: widget.user.id));
                             },
                             child: const Text(
                               'Resolve',
