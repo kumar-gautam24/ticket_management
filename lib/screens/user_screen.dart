@@ -5,9 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/auth_bloc/auth_bloc_bloc.dart';
 import '../blocs/ticket_bloc/ticket_bloc_bloc.dart';
 import '../models/user_model.dart';
-import '../services/auth_services.dart';
 import 'add_ticket.dart';
-import 'login_screen.dart';
 
 class UserScreen extends StatefulWidget {
   final UserModel user;
